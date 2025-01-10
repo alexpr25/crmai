@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CPR-AI Widget Demo</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .demo-container {
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Demo: CPR-AI Widget</h1>
+  <p>Para integrar el widget en tu página web, sigue estos pasos:</p>
+  <pre><code>
+&lt;!-- 1. Agrega un elemento contenedor -->
+&lt;div id="cpr-ai-widget">&lt;/div>
+
+&lt;!-- 2. Incluye el script -->
+&lt;script src="${window.location.origin}/embed.js">&lt;/script>
+
+&lt;!-- 3. Inicializa el widget -->
+&lt;script>
+  window.initCPRAIWidget('cpr-ai-widget');
+&lt;/script>
+  </code></pre>
+
+  <div class="demo-container">
+    <h2>Demo en vivo:</h2>
+    <div id="cpr-ai-widget"></div>
+  </div>
+
+  <script src="embed.js"></script>
+  <script>
+    window.initCPRAIWidget('cpr-ai-widget');
+  </script>
+</body>
+</html>
