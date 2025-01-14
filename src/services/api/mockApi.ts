@@ -3,11 +3,11 @@ import { INSURANCE_MOCK_DATA } from '@/mocks/insuranceData';
 
 export async function mockQueryAI(prompt: string): Promise<AIResponse> {
   await new Promise(resolve => setTimeout(resolve, 800));
-  
+
   const lowercasePrompt = prompt.toLowerCase();
   let response = '';
 
-  // Check definitions first
+  // Verificar definiciones primero
   for (const [term, definition] of Object.entries(INSURANCE_MOCK_DATA.definitions)) {
     if (lowercasePrompt.includes(term)) {
       response = definition;
@@ -15,32 +15,32 @@ export async function mockQueryAI(prompt: string): Promise<AIResponse> {
     }
   }
 
-  // If no definition found, check sections
+  // Si no se encuentra definición, buscar en las secciones
   if (!response) {
-    const sections = [];
-    
-    // Check each section for relevant content
-    for (const [category, content] of Object.entries(INSURANCE_MOCK_DATA.sections)) {
+    const sections: string[] = [];
+
+    // Buscar contenido relevante en cada sección
+    Object.entries(INSURANCE_MOCK_DATA.sections).forEach(([_, content]) => {
       if (Array.isArray(content)) {
         const relevantContent = content.filter(text =>
           text.toLowerCase().includes(lowercasePrompt) ||
-          lowercasePrompt.split(' ').some(word => 
+          lowercasePrompt.split(' ').some(word =>
             text.toLowerCase().includes(word) && word.length > 3
           )
         );
-        
+
         if (relevantContent.length > 0) {
           sections.push(...relevantContent);
         }
       }
-    }
+    });
 
-    // If relevant sections found, use them
+    // Si se encuentran secciones relevantes, úsalas
     if (sections.length > 0) {
       response = sections.join('\n\n');
     } else {
-      // Fallback to general information
-      response = INSURANCE_MOCK_DATA.sections.general.join('\n\n');
+      // Alternativa: usar información general
+      response = INSURANCE_MOCK_DATA.sections.general?.join('\n\n') || '';
     }
   }
 

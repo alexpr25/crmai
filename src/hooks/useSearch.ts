@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { queryAI } from '@/services/api';
 import { queryExternalResources } from '@/services/api/externalResources';
 import { processInsuranceQuery } from '@/services/insuranceCode';
-import { sanitizeQuery, formatResponse } from '@/utils/textProcessing';
+import { formatResponse } from '@/utils/textProcessing';
 import { validateQuery, validateResponse } from '@/utils/validation';
 import { getErrorMessage } from '@/utils/error';
 import { ExternalResource } from '@/types/resources';

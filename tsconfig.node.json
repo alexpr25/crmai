@@ -1,22 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2023"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "composite": true,                  // Necesario para referencias
+    "declaration": true,                // Genera archivos de declaración (.d.ts)
+    "declarationMap": true,             // Mapea las declaraciones para depuración
+    "emitDeclarationOnly": true,        // Solo emite archivos de declaración
+    "moduleResolution": "node",         // Resolución de módulos estilo Node.js
+    "module": "ESNext",                 // Uso de módulos ES6+
+    "target": "ES2022",                 // Soporte para características modernas
+    "strict": true,                     // Activa el modo estricto
+    "skipLibCheck": true,               // Omite comprobaciones de bibliotecas
+    "noUnusedLocals": true,             // Marca variables locales no utilizadas
+    "noUnusedParameters": true,         // Marca parámetros no utilizados
+    "noFallthroughCasesInSwitch": true  // Evita errores en declaraciones switch
   },
-  "include": ["vite.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"] // Incluye archivos TypeScript relevantes
 }

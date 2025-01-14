@@ -14,8 +14,9 @@ export async function queryExternalResources(query: string): Promise<ExternalRes
     ]);
 
     return responses
-      .filter((response): response is PromiseFulfilledResult<ExternalResource[]> => 
-        response.status === 'fulfilled'
+      .filter(
+        (response): response is PromiseFulfilledResult<ExternalResource[]> =>
+          response.status === 'fulfilled'
       )
       .flatMap(response => response.value);
   } catch (error) {
@@ -24,8 +25,41 @@ export async function queryExternalResources(query: string): Promise<ExternalRes
   }
 }
 
+export function queryPRInsurance(query: string): Promise<ExternalResource[]> {
+  return Promise.resolve([
+    {
+      name: 'PR Insurance Guide',
+      url: 'https://pr-insurance-guide.example.com',
+      description: `Relevant results for: ${query}`,
+      relevance: 0.9
+    }
+  ]);
+}
+
+export function queryUSInsurance(query: string): Promise<ExternalResource[]> {
+  return Promise.resolve([
+    {
+      name: 'US Insurance Guide',
+      url: 'https://us-insurance-guide.example.com',
+      description: `Relevant results for: ${query}`,
+      relevance: 0.8
+    }
+  ]);
+}
+
+export function queryFreeResources(query: string): Promise<ExternalResource[]> {
+  return Promise.resolve([
+    {
+      name: 'Free Insurance Resources',
+      url: 'https://free-insurance-resources.example.com',
+      description: `Relevant results for: ${query}`,
+      relevance: 0.7
+    }
+  ]);
+}
+
 function getMockExternalResources(query: string): ExternalResource[] {
-  const resources = [
+  const resources: ExternalResource[] = [
     {
       name: 'Oficina del Comisionado de Seguros (OCS)',
       url: 'https://ocs.pr.gov/consumidores',
@@ -65,9 +99,9 @@ function getMockExternalResources(query: string): ExternalResource[] {
 function calculateRelevance(query: string, resource: ExternalResource): number {
   const queryTerms = query.toLowerCase().split(' ');
   const contentTerms = `${resource.name} ${resource.description}`.toLowerCase().split(' ');
-  
-  const matchCount = queryTerms.reduce((count, term) => 
-    count + (contentTerms.some(word => word.includes(term)) ? 1 : 0), 
+
+  const matchCount = queryTerms.reduce((count, term) =>
+    count + (contentTerms.some(word => word.includes(term)) ? 1 : 0),
     0
   );
 
