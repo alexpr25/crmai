@@ -1,8 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)  # Habilitar CORS para todas las rutas
+
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "message": "Backend running. Use the /api/chat endpoint for POST requests."
+    }), 200
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -25,6 +32,5 @@ def chat():
 
 if __name__ == '__main__':
     # Configurar el puerto para Railway
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
