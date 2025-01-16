@@ -13,22 +13,27 @@ def home():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    data = request.json
-    user_query = data.get("query", "")
+    try:
+        data = request.json
+        user_query = data.get("query", "")
 
-    # Registro para depuración
-    print(f"Received query: {user_query}")
+        # Registro para depuración
+        print(f"Received query: {user_query}")
 
-    # Validación de entrada
-    if not user_query:
-        return jsonify({"error": "No query provided"}), 400
+        # Validación de entrada
+        if not user_query:
+            return jsonify({"error": "No query provided"}), 400
 
-    # Simula lógica de respuesta
-    response = {
-        "result": f"Processed your query: {user_query}",
-        "additionalInfo": "This is a placeholder response",
-    }
-    return jsonify(response)
+        # Simula lógica de respuesta
+        response = {
+            "result": f"Processed your query: {user_query}",
+            "additionalInfo": "This is a placeholder response",
+        }
+        return jsonify(response)
+    
+    except Exception as e:
+        print(f"Error handling /api/chat request: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     # Configurar el puerto para Railway
