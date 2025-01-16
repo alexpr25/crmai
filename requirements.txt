@@ -3,3 +3,5 @@ transformers
 torch
 faiss-cpu
 flask-cors==3.0.10
+flask-cors
+gunicorn
