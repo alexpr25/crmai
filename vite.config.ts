@@ -13,12 +13,12 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
+    proxy: process.env.NODE_ENV === 'development' ? {
       '/api': {
-        target: 'http://localhost:5000', // Cambia al puerto del backend en desarrollo
+        target: 'http://localhost:5000', // Solo en desarrollo
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
-    },
+    } : {},
   },
 });
