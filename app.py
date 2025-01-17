@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
-import openai  # 1) Importar la librería
+import openai
 
 app = Flask(__name__)
 CORS(app)
@@ -20,7 +20,8 @@ def index():
 def chat():
     """
     Endpoint para procesar consultas enviadas al backend.
-    Aquí llamaremos a la API de OpenAI.
+    En esta versión, usamos la nueva interfaz de openai>=1.0.0:
+    openai.Chat.create(...) en lugar de openai.ChatCompletion.create.
     """
     try:
         if not request.is_json:
@@ -32,24 +33,25 @@ def chat():
         if not user_query:
             return jsonify({"error": "Invalid or missing 'query' parameter"}), 400
 
-        # 2) Lee la clave de entorno
+        # Carga la clave de API desde la variable de entorno
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         if not openai.api_key:
             return jsonify({"error": "OPENAI_API_KEY not set"}), 500
 
-        # 3) Llama al modelo GPT-3.5 (ChatCompletion)
-        response = openai.ChatCompletion.create(
+        # Llama al modelo gpt-3.5-turbo usando la NUEVA sintaxis 'Chat.create'
+        response = openai.Chat.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "Eres un asistente amigable y útil."},
                 {"role": "user", "content": user_query}
             ],
             max_tokens=150,
-            temperature=0.7,
+            temperature=0.7
         )
 
-        # 4) Extrae la respuesta
-        ai_answer = response["choices"][0]["message"]["content"].strip()
+        # Extrae la respuesta: la estructura es prácticamente igual,
+        # salvo que la llamada es a 'Chat.create' en vez de 'ChatCompletion.create'
+        ai_answer = response.choices[0].message.content.strip()
 
         return jsonify({
             "text": ai_answer,
