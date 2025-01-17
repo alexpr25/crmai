@@ -20,8 +20,7 @@ def index():
 def chat():
     """
     Endpoint para procesar consultas enviadas al backend.
-    En esta versión, usamos la nueva interfaz de openai>=1.0.0:
-    openai.Chat.create(...) en lugar de openai.ChatCompletion.create.
+    Utiliza openai==0.28.0 para ChatCompletion.create().
     """
     try:
         if not request.is_json:
@@ -33,13 +32,13 @@ def chat():
         if not user_query:
             return jsonify({"error": "Invalid or missing 'query' parameter"}), 400
 
-        # Carga la clave de API desde la variable de entorno
+        # Carga la clave de API desde variable de entorno
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         if not openai.api_key:
             return jsonify({"error": "OPENAI_API_KEY not set"}), 500
 
-        # Llama al modelo gpt-3.5-turbo usando la NUEVA sintaxis 'Chat.create'
-        response = openai.Chat.create(
+        # Llama al modelo GPT-3.5 con la sintaxis previa (ChatCompletion)
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "Eres un asistente amigable y útil."},
@@ -49,8 +48,7 @@ def chat():
             temperature=0.7
         )
 
-        # Extrae la respuesta: la estructura es prácticamente igual,
-        # salvo que la llamada es a 'Chat.create' en vez de 'ChatCompletion.create'
+        # Extrae la respuesta del objeto devuelto por OpenAI
         ai_answer = response.choices[0].message.content.strip()
 
         return jsonify({
@@ -62,6 +60,7 @@ def chat():
     except Exception as e:
         print(f"Error /api/chat: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
