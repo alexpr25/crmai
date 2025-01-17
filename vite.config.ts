@@ -9,16 +9,16 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './src'), // Alias para rutas absolutas en el frontend
     },
   },
   server: {
     proxy: process.env.NODE_ENV === 'development' ? {
       '/api': {
-        target: 'http://localhost:5000', // Solo en desarrollo
+        target: 'http://localhost:5000', // Redirige las solicitudes API al backend local
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api'),
+        rewrite: (path) => path.replace(/^\/api/, '/api'), // Mantiene la estructura de la ruta
       },
-    } : {},
+    } : {}, // En producción, no se usa proxy
   },
 });
