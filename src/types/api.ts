@@ -1,6 +1,6 @@
 export interface AIResponse {
-  text: string;
-  confidence: number;
+  result: string; // Cambiado de "text" a "result" según la respuesta del backend
+  confidence?: number;
   sources?: string[];
   error?: string;
 }

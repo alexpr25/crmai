@@ -13,12 +13,12 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: process.env.NODE_ENV === 'development' ? {
+    proxy: {
       '/api': {
-        target: 'http://localhost:5000', // Redirige las solicitudes API al backend local
+        target: process.env.VITE_API_PROXY || 'http://localhost:5000', // Usa la variable de entorno para flexibilidad
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'), // Mantiene la estructura de la ruta
       },
-    } : {}, // En producción, no se usa proxy
+    },
   },
 });

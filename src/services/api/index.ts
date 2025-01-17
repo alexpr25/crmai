@@ -1,6 +1,8 @@
 import { AIResponse } from '@/types/api';
 import { mockQueryAI } from './mockApi';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 export async function queryAI(prompt: string): Promise<AIResponse> {
   try {
     // Use mock API in development
@@ -8,7 +10,7 @@ export async function queryAI(prompt: string): Promise<AIResponse> {
       return await mockQueryAI(prompt);
     }
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,12 +19,14 @@ export async function queryAI(prompt: string): Promise<AIResponse> {
     });
 
     if (!response.ok) {
+      console.error(`[API Error]: Status ${response.status}`);
       throw new Error('Error en la respuesta del servidor');
     }
 
     const data = await response.json();
-    
-    if (!data.text) {
+
+    if (!data.result) {
+      console.error('[API Error]: Respuesta inválida', data);
       throw new Error('Respuesta inválida del servidor');
     }
 

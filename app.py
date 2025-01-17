@@ -31,13 +31,14 @@ def chat():
         print(f"Received query: {user_query}")
 
         # Validación de entrada
-        if not user_query:
-            return jsonify({"error": "No query provided"}), 400
+        if not user_query or not isinstance(user_query, str):
+            return jsonify({"error": "Invalid or missing 'query' parameter"}), 400
 
         # Simula lógica de respuesta
         response = {
-            "result": f"Processed your query: {user_query}",
-            "additionalInfo": "This is a placeholder response",
+            "text": f"Processed your query: {user_query}",  # Cambio de 'result' a 'text'
+            "confidence": 0.95,  # Agrega un valor de confianza ficticio
+            "sources": ["Example Source 1", "Example Source 2"],  # Fuentes simuladas
         }
         return jsonify(response), 200
     

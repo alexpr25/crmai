@@ -32,11 +32,13 @@ export const useSearch = () => {
         queryExternalResources(query)
       ]);
       
-      if (!validateResponse(aiResponse.text)) {
+      // Cambiado a `result` según la definición de AIResponse
+      if (!validateResponse(aiResponse.result)) {
         throw new Error('La respuesta no es válida');
       }
 
-      setResponse(formatResponse(aiResponse.text));
+      // Cambiado a `result` según la definición de AIResponse
+      setResponse(formatResponse(aiResponse.result));
       setResources(externalResources);
       
     } catch (error) {
