@@ -1,0 +1,113 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat - Ejemplo</title>
+  <style>
+    /* Estilos mínimos para el ejemplo */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      height: 300px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 5px 0;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    .user-message {
+      background-color: #e0f7fa;
+      text-align: right;
+    }
+    .bot-message {
+      background-color: #fff9c4;
+      text-align: left;
+    }
+    #chat-input {
+      width: 80%;
+      padding: 8px;
+    }
+    #send-button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat de Ejemplo</h1>
+  
+  <!-- Contenedor donde se mostrarán los mensajes -->
+  <div id="messages"></div>
+  
+  <!-- Input para escribir el mensaje y botón para enviar -->
+  <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." />
+  <button id="send-button">Enviar</button>
+  
+  <script>
+    const messagesContainer = document.getElementById('messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendButton = document.getElementById('send-button');
+
+    // Función para agregar mensajes al div "messages"
+    function addMessage(text, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+      messageDiv.textContent = text;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Manejar clic en "Enviar"
+    sendButton.addEventListener('click', () => {
+      const query = chatInput.value.trim();
+      if (!query) return;
+
+      // Agrega el mensaje del usuario a la vista
+      addMessage(query, true);
+
+      // Llama a /api/chat con POST y JSON
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Suponemos que el backend responde con un campo "text"
+        if (data.error) {
+          addMessage(`Error: ${data.error}`, false);
+        } else if (data.text) {
+          // Muestra la respuesta del 'chat'
+          addMessage(data.text, false);
+        } else {
+          // Respuesta inesperada
+          addMessage('No se recibió texto de respuesta.', false);
+        }
+      })
+      .catch(error => {
+        console.error('Error en la petición:', error);
+        addMessage(`Error en la petición: ${error}`, false);
+      });
+
+      // Limpia el input
+      chatInput.value = '';
+      chatInput.focus();
+    });
+
+    // Permite enviar con Enter
+    chatInput.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
+        sendButton.click();
+      }
+    });
+  </script>
+</body>
+</html>

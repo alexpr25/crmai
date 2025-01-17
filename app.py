@@ -1,54 +1,66 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import os
+import openai  # 1) Importar la librería
 
 app = Flask(__name__)
-CORS(app)  # Habilitar CORS para todas las rutas
+CORS(app)
 
-@app.route('/', methods=['GET'])
-def home():
-    """
-    Endpoint principal para verificar que el backend está funcionando.
-    """
+@app.route('/ping', methods=['GET'])
+def ping():
     return jsonify({
         "message": "Backend running. Use the /api/chat endpoint for POST requests."
     }), 200
+
+@app.route('/', methods=['GET'])
+def index():
+    return render_template("chat.html")
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """
     Endpoint para procesar consultas enviadas al backend.
+    Aquí llamaremos a la API de OpenAI.
     """
     try:
-        # Verificar que la solicitud tiene datos JSON
         if not request.is_json:
             return jsonify({"error": "Request body must be JSON"}), 400
-        
+
         data = request.get_json()
         user_query = data.get("query", "").strip()
 
-        # Registro para depuración
-        print(f"Received query: {user_query}")
-
-        # Validación de entrada
-        if not user_query or not isinstance(user_query, str):
+        if not user_query:
             return jsonify({"error": "Invalid or missing 'query' parameter"}), 400
 
-        # Simula lógica de respuesta
-        response = {
-            "text": f"Processed your query: {user_query}",  # Cambio de 'result' a 'text'
-            "confidence": 0.95,  # Agrega un valor de confianza ficticio
-            "sources": ["Example Source 1", "Example Source 2"],  # Fuentes simuladas
-        }
-        return jsonify(response), 200
+        # 2) Lee la clave de entorno
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
+        if not openai.api_key:
+            return jsonify({"error": "OPENAI_API_KEY not set"}), 500
+
+        # 3) Llama al modelo GPT-3.5 (ChatCompletion)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Eres un asistente amigable y útil."},
+                {"role": "user", "content": user_query}
+            ],
+            max_tokens=150,
+            temperature=0.7,
+        )
+
+        # 4) Extrae la respuesta
+        ai_answer = response["choices"][0]["message"]["content"].strip()
+
+        return jsonify({
+            "text": ai_answer,
+            "confidence": 1.0,
+            "sources": ["OpenAI GPT-3.5"]
+        }), 200
     
     except Exception as e:
-        # Registro de errores en los logs
-        print(f"Error handling /api/chat request: {str(e)}")
+        print(f"Error /api/chat: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
-    # Configurar el puerto para Railway
     port = int(os.environ.get("PORT", 5000))
-    print(f"Starting server on port {port}...")
     app.run(host='0.0.0.0', port=port)
